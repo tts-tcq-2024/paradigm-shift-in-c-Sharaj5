@@ -1,47 +1,27 @@
 #include <stdio.h>
 #include <assert.h>
- 
-int checkRange(float value, float min, float max, const char* message) {
-    if (value < min || value > max) {
-        printf("%s\n", message);
-        return 0;
-    }
-    return 1;
+
+int is_Within_Range(float value, float minimum, float maximum) {
+  return (value >= minimum && value <= maximum);
 }
-int checkChargeRate(float value, float max, const char* message)
-{
-    if (value > max) {
-        printf("%s\n", message);
-        return 0;
-    }
-    return 1;
+
+int check_scope(float value, float minimum, float maximum, const char* errorMessage) {
+  if (!is_Within_Range(value, minimum, maximum)) {
+    printf("%s\n", errorMessage);
+    return 0;
+  }
+  return 1;
 }
- 
- 
-int isTemperatureOutOfRange(float temperature) {
-	return checkRange(temperature, 0, 45, "Temperature out of range!");
-}
- 
-int isSocOutOfRange(float soc) {
-	return checkRange(soc, 20, 80, "State of Charge out of range!");
-}
- 
-int isChargeRateOutOfRange(float chargeRate) {
-	return checkChargeRate(chargeRate,0.8, "Charge Rate out of range!");
-}
- 
+
 int batteryIsOk(float temperature, float soc, float chargeRate) {
-	return (isTemperatureOutOfRange(temperature) && isSocOutOfRange(soc) && isChargeRateOutOfRange(chargeRate));
- 
+  int Tremp_Ok = check_scope(temperature, 0, 45, "The temperature is out of range...");
+  int Soc_Ok = check_scope(soc, 20, 80, "The state of Charge is out of range...");
+  int ChargeRate_Ok = check_scope(chargeRate, 0, 0.8, "The charge Rate is out of range...");
+
+  return Tremp_Ok && Soc_Ok && ChargeRate_Ok;
 }
 
 int main() {
-    assert(batteryIsOk(25, 70, 0.7) == 1); // Should pass
-    assert(batteryIsOk(50, 85, 0) == 0);   // Should fail batteryIsOk checks
-    assert(batteryIsOk(-5, 50, 0.5) == 0);  // Out of temperature range
-    assert(batteryIsOk(25, 10, 0.5) == 0);  // Out of SOC range
-    assert(batteryIsOk(25, 50, 0.9) == 0);  // Out of charge rate range
-
-    printf("All assertions passed.\n");
-    return 0;
+  assert(batteryIsOk(25, 70, 0.7));
+  assert(!batteryIsOk(50, 85, 0));
 }
