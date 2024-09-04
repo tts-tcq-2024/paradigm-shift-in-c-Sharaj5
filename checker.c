@@ -1,52 +1,60 @@
-#include <stdio.h>
-#include <assert.h>
+using System;
+using System.Diagnostics;
+namespace paradigm_shift_csharp
+{
+class Checker
+{
+     static bool isTemperatureWithInTheRange(float temperature)
+     {
+           if (temperature < 0 || temperature > 45)
+         {
+             Console.WriteLine("Temperature is out of range!");
+             return false;
+         }
+     return true;
+     }
 
-int isTemperatureOk(float temperature) {
-    return temperature < 0 || temperature > 45;
-}
+     static bool isSocWithInTheRange(float soc)
+     {
+        if (soc < 20 || soc > 80)
+         {
+             Console.WriteLine("State of Charge is out of range!");
+             return false;
+         }
+     return true;
+     }
 
-int isSocOk(float soc) {
-    return soc < 20 || soc > 80;
-}
-
-int isChargeRateOk(float chargeRate) {
-    return chargeRate > 0.8;
-}
-
-void disp_temp(int temp_check){
-    
-    if(!temp_check){
-        printf("Temperature out of range!\n");
+     static bool isChargeRateWithInTheRange(float chargeRate)
+     {
+          if (chargeRate > 0.8)
+         {
+             Console.WriteLine("Charge Rate is out of range!");
+             return false;
+         }
+     return true;
+     }
+    static bool batteryIsOk(float temperature, float soc, float chargeRate) {
+     return isTemperatureWithInTheRange(temperature) && isSocWithInTheRange(soc) && isChargeRateWithInTheRange(chargeRate);     
     }
-}
-void disp_soc(int soc_check){
-    
-    if(!soc_check){
-        printf("State of Charge out of range!\n");
+
+    static void ExpectTrue(bool expression) {
+        if(!expression) {
+            Console.WriteLine("Expected true, but got false");
+            Environment.Exit(1);
+        }
     }
-}
-void disp_cr(int cr_check){
-    
-    if(!cr_check){
-        printf("Charge Rate out of range!\n");
+    static void ExpectFalse(bool expression) {
+        if(expression) {
+            Console.WriteLine("Expected false, but got true");
+            Environment.Exit(1);
+        }
     }
-}
-int batteryIsOk(float temperature, float soc, float chargeRate) {
-    int temp_ok = !isTemperatureOk(temperature);
-    int soc_ok = !isSocOk(soc);
-    int charge_ok = !isChargeRateOk(chargeRate);
+    static int Main() {
+        ExpectTrue(batteryIsOk(25, 70, 0.7f));
+        ExpectFalse(batteryIsOk(50, 85, 0.0f));
+        Console.WriteLine("All ok");
+        return 0;
+    }
     
-    disp_temp(temp_ok);
-    disp_soc(soc_ok);
-    disp_cr(charge_ok);
-    
-    return 1;
 }
-int main() {
-    assert(batteryIsOk(25, 70, 0.7));//no print
-    assert(batteryIsOk(55, 50, 0.2));//temp out of range
-    assert(batteryIsOk(-1, 75, 0.0));//temp out of range
-    assert(batteryIsOk(20, 90, 0.2));//Soc Out of range
-    assert(batteryIsOk(20, 15, 0.2));//Soc Out of range
-    assert(batteryIsOk(25, 25, 0.8));//charge out of range
 }
